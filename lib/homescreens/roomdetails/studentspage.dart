@@ -32,7 +32,6 @@ class RoomDetailsScreen extends ConsumerWidget {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Room Info
                 Row(
                   children: [
                     const Icon(Icons.person),
@@ -101,7 +100,6 @@ class RoomDetailsScreen extends ConsumerWidget {
                 Center(
                   child: ElevatedButton.icon(
                     onPressed: () {
-                      // Add student logic
                     },
                     icon: const Icon(Icons.person_add),
                     label: const Text("Add Student"),

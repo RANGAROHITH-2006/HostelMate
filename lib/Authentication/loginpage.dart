@@ -42,6 +42,7 @@ class _LoginpageState extends ConsumerState<Loginpage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
           Positioned(

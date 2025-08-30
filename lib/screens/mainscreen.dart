@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hostelmate/Authentication/loginpage.dart';
 import 'package:hostelmate/homescreens/navigatorpage.dart';
+import 'package:hostelmate/screens/screenpages/expenditure.dart';
+import 'package:hostelmate/screens/screenpages/unpaidstatus.dart';
 import 'package:hostelmate/staticscreens/sidenavbar.dart';
 import 'package:hostelmate/staticscreens/profilemenu.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,10 +25,10 @@ class _DashboardScreenState extends State<MainScreen> {
     await prefs.clear();
   }
 
-  final List<Widget> _screens = const [
+  final List<Widget> _screens =  [
     NavigatorPage(),
-    Center(child: Text("Un-paid")),
-    Center(child: Text("Expenditure")),
+    Unpaidstatus(),
+    Expenditure(),
     Center(child: Text("Plans")), 
   ];
 

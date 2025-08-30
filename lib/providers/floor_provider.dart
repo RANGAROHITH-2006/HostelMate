@@ -28,9 +28,15 @@ class FloorActions {
     
   }
 
-  Future<void> deleteFloor(String floorId,String hostelId) async {
-    await service.deleteFloor(floorId);
-     ref.invalidate(floorProvider(hostelId));
-    
+  Future<void> deleteFloor(String floorId, String hostelId) async {
+    try {
+      await service.deleteFloor(floorId);
+      ref.invalidate(floorProvider(hostelId));
+      // Force refresh the data
+      await Future.delayed(Duration(milliseconds: 100));
+    } catch (e) {
+      print('Error in deleteFloor action: $e');
+      rethrow;
+    }
   }
 }

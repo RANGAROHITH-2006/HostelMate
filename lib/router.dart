@@ -6,7 +6,7 @@ import 'package:hostelmate/screens/mainscreen.dart';
 
 final route = GoRouter(
   initialLocation: '/loginpage',
-  redirect: (context, state) {
+    redirect: (context, state) {
       final isLoggedIn = LoginSession.loggedIn;
       final loggingIn = state.matchedLocation == '/loginpage' || state.matchedLocation == '/signuppage';
 

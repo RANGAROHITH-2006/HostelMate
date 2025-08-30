@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:hostelmate/models/rooms_model.dart';
-import 'package:hostelmate/popupdialogs/floordialog.dart';
 
 class RoomCard extends StatelessWidget {
   final Room room;
+  final String hostelId;
   final VoidCallback onDelete;
  
-  const RoomCard({required this.room, required this.onDelete, super.key});
+  const RoomCard({required this.room, required this.hostelId, required this.onDelete, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -30,16 +30,7 @@ class RoomCard extends StatelessWidget {
                 ),
               ),
               IconButton(
-                onPressed: () async {
-                  showDeleteConfirmationDialog(
-                    context: context,
-                    title: 'Room',
-                    word: 'students',
-                    onConfirm: () {
-                      onDelete();
-                    },
-                  );
-                },
+                onPressed: onDelete,
                 icon: Icon(Icons.delete),
                 color: Colors.red,
               ),

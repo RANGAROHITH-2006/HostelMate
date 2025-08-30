@@ -25,7 +25,12 @@ class RoomService {
   }
 
   Future<void> deleteRoom(String roomId) async {
-    await Supabase.instance.client.from('rooms').delete().eq('id', roomId);
+   try {
+      await Supabase.instance.client.from('rooms').delete().eq('id', roomId);
+    } catch (e) {
+      print('Error deleting room: $e');
+      throw Exception('Failed to delete room: $e');
+    }
   }
 
 

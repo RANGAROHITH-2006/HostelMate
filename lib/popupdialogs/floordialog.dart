@@ -53,7 +53,7 @@ Future<void> showDeleteConfirmationDialog({
   required BuildContext context,
   required String title,
   required String word,
-  required VoidCallback onConfirm,
+  required Future<void> Function() onConfirm,
 }) async {
   await showDialog(
     context: context,
@@ -75,11 +75,10 @@ Future<void> showDeleteConfirmationDialog({
             child: const Text('Cancel'),
           ),
           ElevatedButton.icon(
-            onPressed: () {
-              print('okk called');
-              onConfirm();
+            onPressed: () async {
+              print('Delete button clicked');
               Navigator.of(context).pop();
-              
+              await onConfirm();
             },
             icon: const Icon(Icons.delete, color: Colors.white),
             label: const Text(

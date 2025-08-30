@@ -6,13 +6,11 @@ import 'package:hostelmate/providers/floor_provider.dart';
 
 class FloorsAndRoomsPage extends ConsumerStatefulWidget {
   final String hostelId;
-  final String floorId;
   final VoidCallback onRoomTap;
 
   const FloorsAndRoomsPage({
     super.key,
     required this.hostelId,
-    required this.floorId,
     required this.onRoomTap,
   });
 
@@ -52,7 +50,18 @@ class _FloorsAndRoomsPageState extends ConsumerState<FloorsAndRoomsPage> {
               }
               final floorNumbers =
                   floors.map((f) => f.floorNumber).toSet().toList()..sort();
-              selectedFloorNumber ??= floorNumbers.first;
+              
+              // Reset selectedFloorNumber if it doesn't exist in current floors
+              if (selectedFloorNumber != null && !floorNumbers.contains(selectedFloorNumber)) {
+                selectedFloorNumber = floorNumbers.isNotEmpty ? floorNumbers.first : null;
+              }
+              
+              selectedFloorNumber ??= floorNumbers.isNotEmpty ? floorNumbers.first : null;
+
+              // If no floors exist, show a message
+              if (floorNumbers.isEmpty || selectedFloorNumber == null) {
+                return const Center(child: Text("No floors available"));
+              }
 
               final selectedFloor = floors.firstWhere(
                 (f) => f.floorNumber == selectedFloorNumber,
@@ -85,7 +94,7 @@ class _FloorsAndRoomsPageState extends ConsumerState<FloorsAndRoomsPage> {
                             ),
                             child: DropdownButtonHideUnderline(
                               child: DropdownButton<int>(
-                                value: selectedFloorNumber,
+                                value: floorNumbers.contains(selectedFloorNumber) ? selectedFloorNumber : null,
                                 onChanged: (val) {
                                   setState(() {
                                     selectedFloorNumber = val!;
@@ -186,12 +195,12 @@ class _FloorsAndRoomsPageState extends ConsumerState<FloorsAndRoomsPage> {
                       ),
                     ),
                     FloorCard(
-                      floorId: widget.floorId,
+                      floorId: selectedFloor.id,
                       floor: selectedFloor,
                       hostelId: widget.hostelId,
                       onDeleted: () {
                         setState(() {
-                          selectedFloorNumber = null;
+                          
                         });
                       },
                       onRoomTap: widget.onRoomTap,

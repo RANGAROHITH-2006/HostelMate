@@ -18,6 +18,11 @@ class FloorService {
   }
 
   Future<void> deleteFloor(String floorId) async {
-    await _client.from('floors').delete().eq('id', floorId,);
+    try {
+      await _client.from('floors').delete().eq('id', floorId);
+    } catch (e) {
+      print('Error deleting floor: $e');
+      throw Exception('Failed to delete floor: $e');
+    }
   }
 }

@@ -120,10 +120,20 @@ class FloorCard extends ConsumerWidget {
                       title: 'Floor',
                       word: 'Rooms',
                       onConfirm: () async {
-                        await ref
-                            .read(floorActionsProvider)
-                            .deleteFloor(floor.id, hostelId);
-                        ref.invalidate(roomProvider(hostelId));
+                        try {
+                          await ref
+                              .read(floorActionsProvider)
+                              .deleteFloor(floor.id, hostelId);
+                          ref.invalidate(floorProvider(hostelId));
+                          
+                          onDeleted();
+                        } catch (e) {
+                          print('Error deleting floor: $e');
+                         
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Error deleting floor: $e')),
+                          );
+                        }
                       },
                     );
                   },
@@ -172,16 +182,24 @@ class FloorCard extends ConsumerWidget {
                         onTap: onRoomTap,
                         child: RoomCard(
                           room: data[index],
+                          hostelId: hostelId,
                           onDelete: () async {
                             await showDeleteConfirmationDialog(
                               context: context,
                               title: 'Room',
                               word: 'Students',
                               onConfirm: () async {
-                                ref
-                                    .read(roomActionsProvider)
-                                    .deleteRoom(data[index].id);
-                                ref.invalidate(roomProvider(floorId));
+                                try {
+                                  await ref
+                                      .read(roomActionsProvider)
+                                      .deleteRoom(data[index].id);
+                                  ref.invalidate(roomProvider(floorId));
+                                } catch (e) {
+                                  print('Error deleting room: $e');
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('Error deleting room: $e')),
+                                  );
+                                }
                               },
                             );
                           },
