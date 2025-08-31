@@ -32,7 +32,7 @@ class RoomCard extends StatelessWidget {
               IconButton(
                 onPressed: onDelete,
                 icon: Icon(Icons.delete),
-                color: Colors.red,
+                color: Colors.orange,
               ),
             ],
           ),          

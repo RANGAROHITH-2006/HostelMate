@@ -12,19 +12,23 @@ class LoginSession extends ChangeNotifier {
 
   Future<void> checkLogin() async {
     final prefs = await SharedPreferences.getInstance();
-    loggedIn = prefs.containsKey('loggedInHostel');
+    // Check for hostel_id instead of loggedInHostel to match auth_services
+    loggedIn = prefs.containsKey('hostel_id');
     notifyListeners();
   }
 
   static Future<void> logout() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('loggedInHostel');
+    // Clear both hostel_id and hostel_name to match auth_services
+    await prefs.remove('hostel_id');
+    await prefs.remove('hostel_name');
     loggedIn = false;
     _instance.notifyListeners();
   }
 
   static Future<String?> getHostelName() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('loggedInHostel');
+    // Get hostel_name instead of loggedInHostel
+    return prefs.getString('hostel_name');
   }
 }

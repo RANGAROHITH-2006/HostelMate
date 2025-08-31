@@ -265,7 +265,7 @@ class ExpenditureContent extends ConsumerWidget {
                 );
               }
             },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
             child: const Text('Delete', style: TextStyle(color: Colors.white)),
           ),
         ],
@@ -352,12 +352,12 @@ class ExpenditureCard extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
-                      color: Colors.red.withOpacity(0.1),
+                      color: Colors.orange.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: const Icon(
                       Icons.delete,
-                      color: Colors.red,
+                      color: Colors.orange,
                       size: 20,
                     ),
                   ),

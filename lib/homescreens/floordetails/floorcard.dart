@@ -53,6 +53,8 @@ class FloorCard extends ConsumerWidget {
               children: [
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(4),
                     ),
@@ -107,6 +109,8 @@ class FloorCard extends ConsumerWidget {
                 SizedBox(width: 10),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.orange,
+                    foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(4),
                     ),
@@ -143,13 +147,13 @@ class FloorCard extends ConsumerWidget {
                     children: const [
                       Icon(
                         Icons.delete,
-                        color: Color.fromARGB(255, 233, 95, 85),
+                        color: Colors.white,
                       ),
                       SizedBox(width: 8),
                       Text(
                         'Floor',
                         style: TextStyle(
-                          color: Color.fromARGB(255, 233, 95, 85),
+                          color: Colors.white,
                         ),
                       ),
                     ],
@@ -162,7 +166,7 @@ class FloorCard extends ConsumerWidget {
             rooms.when(
               data: (data) {
                 if (data.isEmpty) {
-                  return const Text("No rooms yet");
+                  return Center(child: const Text("No rooms yet"));
                 }
                 return SizedBox(
                   height: 205,

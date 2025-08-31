@@ -30,6 +30,8 @@ Future<void> showAddFloorDialog({
           ),
           ElevatedButton.icon(
             style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.green,
+              foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(4),
               ),
@@ -179,7 +181,7 @@ Future<void> showDeleteConfirmationDialog({
               style: TextStyle(color: Colors.white, fontSize: 15),
             ),
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color.fromARGB(255, 227, 95, 86),
+              backgroundColor: Colors.orange,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(4),
               ),
@@ -240,6 +242,8 @@ Future<void> showAddRoomDialog({
           ),
           ElevatedButton.icon(
             style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.green,
+              foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(4),
               ),
