@@ -49,6 +49,99 @@ Future<void> showAddFloorDialog({
   );
 }
 
+Future<void> showAddExpenditureDialog({
+  required BuildContext context,
+  required Function(String item, double cost) onSave,
+}) async {
+  final itemController = TextEditingController();
+  final costController = TextEditingController();
+  final formKey = GlobalKey<FormState>();
+
+  await showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: const Text('Add Expense'),
+        content: Form(
+          key: formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                controller: itemController,
+                decoration: const InputDecoration(
+                  labelText: 'Item Name',
+                  hintText: 'Enter item name',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'Please enter item name';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: costController,
+                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                decoration: const InputDecoration(
+                  labelText: 'Cost',
+                  hintText: 'Enter cost',
+                  border: OutlineInputBorder(),
+                  prefixText: '₹ ',
+                ),
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'Please enter cost';
+                  }
+                  final cost = double.tryParse(value);
+                  if (cost == null || cost <= 0) {
+                    return 'Please enter a valid cost';
+                  }
+                  return null;
+                },
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(4),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            ),
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton.icon(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.green,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(4),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            ),
+            onPressed: () {
+              if (formKey.currentState!.validate()) {
+                final item = itemController.text.trim();
+                final cost = double.parse(costController.text.trim());
+                Navigator.of(context).pop();
+                onSave(item, cost);
+              }
+            },
+            icon: const Icon(Icons.save),
+            label: const Text('Save'),
+          ),
+        ],
+      );
+    },
+  );
+}
+
 Future<void> showDeleteConfirmationDialog({
   required BuildContext context,
   required String title,

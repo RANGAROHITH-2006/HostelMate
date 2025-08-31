@@ -3,10 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hostelmate/homescreens/floordetails/floors_rooms.dart';
 import 'package:hostelmate/staticscreens/dashboardcards.dart';
 import 'package:hostelmate/providers/hostel_provider.dart';
+import 'package:hostelmate/models/rooms_model.dart';
 
 
 class HomePageScreen extends ConsumerStatefulWidget {
-  final VoidCallback onRoomTap;
+  final Function(Room room, String floorName) onRoomTap;
   const HomePageScreen({super.key, required this.onRoomTap});
 
   @override
@@ -31,7 +32,7 @@ class _HomePageScreenState extends ConsumerState<HomePageScreen> {
             SizedBox(height: 10),
             hostelNameAsync.when(
               data: (hostelName) => Text(
-                'Welcome back to ${hostelName ?? 'Hostel'}', 
+                'Welcome back to $hostelName Hostel', 
                 style: TextStyle(fontSize: 24)
               ),
               loading: () => Text('Welcome back to Hostel', style: TextStyle(fontSize: 24)),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hostelmate/homescreens/floordetails/roomscard.dart';
 import 'package:hostelmate/models/floors_model.dart';
+import 'package:hostelmate/models/rooms_model.dart';
 import 'package:hostelmate/popupdialogs/floordialog.dart';
 import 'package:hostelmate/providers/floor_provider.dart';
 import 'package:hostelmate/providers/rooms_provider.dart';
@@ -11,7 +12,7 @@ class FloorCard extends ConsumerWidget {
   final Floor floor;
   final String hostelId;
   final VoidCallback onDeleted;
-  final VoidCallback onRoomTap;
+  final Function(Room room, String floorName) onRoomTap;
 
   const FloorCard({
     super.key,
@@ -125,7 +126,7 @@ class FloorCard extends ConsumerWidget {
                               .read(floorActionsProvider)
                               .deleteFloor(floor.id, hostelId);
                           ref.invalidate(floorProvider(hostelId));
-                          
+                          ref.invalidate(roomProvider(floorId));                     
                           onDeleted();
                         } catch (e) {
                           print('Error deleting floor: $e');
@@ -179,7 +180,7 @@ class FloorCard extends ConsumerWidget {
                     itemCount: data.length,
                     itemBuilder: (context, index) {
                       return GestureDetector(
-                        onTap: onRoomTap,
+                        onTap: () => onRoomTap(data[index], 'Floor ${floor.floorNumber}'),
                         child: RoomCard(
                           room: data[index],
                           hostelId: hostelId,

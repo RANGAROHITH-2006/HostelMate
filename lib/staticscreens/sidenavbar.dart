@@ -16,7 +16,21 @@ class _SideNavBarState extends State<SideNavBar> {
   Widget build(BuildContext context) {
     return Drawer(
       child: Container(
-        color: const Color(0xFF0B1E38),
+       decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xFF0B1E38), Color(0xFF1A3A5C)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 8,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
         child: Column(
           children: [
             const SizedBox(height: 50),

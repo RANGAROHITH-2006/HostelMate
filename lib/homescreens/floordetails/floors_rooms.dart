@@ -3,10 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hostelmate/homescreens/floordetails/floorcard.dart';
 import 'package:hostelmate/popupdialogs/floordialog.dart';
 import 'package:hostelmate/providers/floor_provider.dart';
+import 'package:hostelmate/models/rooms_model.dart';
 
 class FloorsAndRoomsPage extends ConsumerStatefulWidget {
   final String hostelId;
-  final VoidCallback onRoomTap;
+  final Function(Room room, String floorName) onRoomTap;
 
   const FloorsAndRoomsPage({
     super.key,
