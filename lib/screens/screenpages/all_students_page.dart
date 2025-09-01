@@ -3,6 +3,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hostelmate/providers/roomdataprovider.dart';
 import 'package:hostelmate/providers/hostel_provider.dart';
 import 'package:hostelmate/models/roomdatamodel.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+final List<Color> avatarColors = [
+  Colors.red,
+  Colors.blue,
+  Colors.green,
+  Colors.orange,
+  Colors.purple,
+  Colors.teal,
+  Colors.brown,
+  Colors.indigo,
+];
 
 class AllStudentsPage extends ConsumerStatefulWidget {
   const AllStudentsPage({super.key});
@@ -432,11 +444,17 @@ class _AllStudentsPageState extends ConsumerState<AllStudentsPage> {
     );
   }
 
+  // Function to get a consistent color for each student based on their ID
+  Color _getAvatarColor(String studentId) {
+    final hash = studentId.hashCode;
+    return avatarColors[hash.abs() % avatarColors.length];
+  }
+
   Widget _buildStudentTile(StudentModel student) {
     return ListTile(
       contentPadding: const EdgeInsets.all(16),
       leading: CircleAvatar(
-        backgroundColor: const Color(0xFF0B1E38),
+        backgroundColor: _getAvatarColor(student.id),
         child: Text(
           student.name.isNotEmpty ? student.name[0].toUpperCase() : 'S',
           style: const TextStyle(
@@ -506,6 +524,16 @@ class _AllStudentsPageState extends ConsumerState<AllStudentsPage> {
       trailing: PopupMenuButton(
         itemBuilder: (context) => [
           const PopupMenuItem(
+            value: 'call',
+            child: Row(
+              children: [
+                Icon(Icons.phone, size: 18, color: Colors.green),
+                SizedBox(width: 8),
+                Text('Call', style: TextStyle(color: Colors.green)),
+              ],
+            ),
+          ),
+          const PopupMenuItem(
             value: 'view',
             child: Row(
               children: [
@@ -536,9 +564,32 @@ class _AllStudentsPageState extends ConsumerState<AllStudentsPage> {
             ),
           ),
         ],
-        onSelected: (value) {
-          // TODO: Handle menu actions
-          print('Selected $value for ${student.name}');
+        onSelected: (value) async {
+          if (value == 'call') {
+            final Uri phoneUri = Uri(scheme: 'tel', path: student.phone);
+            try {
+              if (await canLaunchUrl(phoneUri)) {
+                await launchUrl(phoneUri);
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Unable to make phone call'),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
+            } catch (e) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Error making call: $e'),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            }
+          } else {
+            // TODO: Handle other menu actions
+            print('Selected $value for ${student.name}');
+          }
         },
       ),
     );

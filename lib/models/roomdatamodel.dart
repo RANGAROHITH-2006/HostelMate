@@ -37,4 +37,8 @@ class StudentModel {
       parentPhoneNumber: map['parent_phone_number']?.toString() ?? '',
     );
   }
+
+  // Getter methods for compatibility
+  String get fullName => name;
+  String get phoneNumber => phone;
 }

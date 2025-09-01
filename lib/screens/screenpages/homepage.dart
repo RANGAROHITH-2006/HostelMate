@@ -33,7 +33,7 @@ class _HomePageScreenState extends ConsumerState<HomePageScreen> {
             hostelNameAsync.when(
               data: (hostelName) => Text(
                 'Welcome back to $hostelName Hostel', 
-                style: TextStyle(fontSize: 24)
+                style: TextStyle(fontSize: 20)
               ),
               loading: () => Text('Welcome back to Hostel', style: TextStyle(fontSize: 24)),
               error: (_, __) => Text('Welcome back to Hostel', style: TextStyle(fontSize: 24)),

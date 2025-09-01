@@ -1,8 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hostelmate/providers/roomdataprovider.dart';
+import 'package:hostelmate/providers/student_provider.dart';
 import 'package:hostelmate/models/rooms_model.dart';
 import 'package:hostelmate/homescreens/roomdetails/add_student_page.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+final List<Color> avatarColors = [
+  Colors.red,
+  Colors.blue,
+  Colors.green,
+  Colors.orange,
+  Colors.purple,
+  Colors.teal,
+  Colors.brown,
+  Colors.indigo,
+];
 
 class RoomDetailsScreen extends ConsumerWidget {
   final Room room;
@@ -15,6 +28,12 @@ class RoomDetailsScreen extends ConsumerWidget {
     required this.floorName,
     required this.onBack,
   });
+
+  // Function to get a consistent color for each student based on their ID
+  Color _getAvatarColor(String studentId) {
+    final hash = studentId.hashCode;
+    return avatarColors[hash.abs() % avatarColors.length];
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -220,7 +239,7 @@ class RoomDetailsScreen extends ConsumerWidget {
                   ],
                 ),
 
-                const SizedBox(height: 16),
+                const SizedBox(height: 10),
 
                 // Students List
                 if (roomStudents.isEmpty)
@@ -282,9 +301,9 @@ class RoomDetailsScreen extends ConsumerWidget {
                           ],
                         ),
                         child: ListTile(
-                          contentPadding: const EdgeInsets.all(16),
+                          contentPadding: const EdgeInsets.all(10),
                           leading: CircleAvatar(
-                            backgroundColor: const Color(0xFF0B1E38),
+                            backgroundColor: _getAvatarColor(student.id),
                             child: Text(
                               student.name[0].toUpperCase(),
                               style: const TextStyle(
@@ -316,24 +335,21 @@ class RoomDetailsScreen extends ConsumerWidget {
                                   ],
                                 ),
                                 const SizedBox(height: 4),
-                                Row(
-                                  children: [
-                                    const Icon(Icons.email, size: 16, color: Colors.grey),
-                                    const SizedBox(width: 6),
-                                    Expanded(
-                                      child: Text(
-                                        student.email,
-                                        style: const TextStyle(fontSize: 14),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                  ],
-                                ),
                               ],
                             ),
                           ),
                           trailing: PopupMenuButton(
                             itemBuilder: (context) => [
+                              const PopupMenuItem(
+                                value: 'call',
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.phone, size: 18, color: Colors.green),
+                                    SizedBox(width: 8),
+                                    Text('Call', style: TextStyle(color: Colors.green)),
+                                  ],
+                                ),
+                              ),
                               const PopupMenuItem(
                                 value: 'edit',
                                 child: Row(
@@ -355,8 +371,80 @@ class RoomDetailsScreen extends ConsumerWidget {
                                 ),
                               ),
                             ],
-                            onSelected: (value) {
-                              // TODO: Handle edit/remove actions
+                            onSelected: (value) async {
+                              if (value == 'call') {
+                                final Uri phoneUri = Uri(scheme: 'tel', path: student.phone);
+                                try {
+                                  if (await canLaunchUrl(phoneUri)) {
+                                    await launchUrl(phoneUri);
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Unable to make phone call'),
+                                        backgroundColor: Colors.red,
+                                      ),
+                                    );
+                                  }
+                                } catch (e) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('Error making call: $e'),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
+                                }
+                              } else if (value == 'edit') {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => AddStudentPage(
+                                      hostelId: student.hostelId,
+                                      roomId: student.roomId,
+                                      isEditing: true,
+                                      student: student,
+                                    ),
+                                  ),
+                                );
+                              } else if (value == 'remove') {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    title: const Text('Remove Student'),
+                                    content: Text('Are you sure you want to remove ${student.name}?'),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        child: const Text('Cancel'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () async {
+                                          try {
+                                            await ref.read(studentProvider.notifier).removeStudent(student.id);
+                                            Navigator.pop(context); // Close the popup
+                                            ref.invalidate(allStudentsProvider); // Refresh the student list
+                                            
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              SnackBar(
+                                                content: Text('${student.name} removed successfully!'),
+                                                backgroundColor: Colors.green,
+                                              ),
+                                            );
+                                          } catch (e) {
+                                            Navigator.pop(context); // Close the popup
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              SnackBar(
+                                                content: Text('Error removing student: $e'),
+                                                backgroundColor: Colors.red,
+                                              ),
+                                            );
+                                          }
+                                        },
+                                        child: const Text('Remove', style: TextStyle(color: Colors.red)),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }
                             },
                           ),
                         ),
@@ -364,7 +452,7 @@ class RoomDetailsScreen extends ConsumerWidget {
                     },
                   ),
 
-                const SizedBox(height: 24),
+                const SizedBox(height: 10),
               ],
             ),
           );

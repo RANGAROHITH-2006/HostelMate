@@ -2,15 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hostelmate/providers/student_provider.dart';
 import 'package:hostelmate/providers/roomdataprovider.dart';
+import 'package:hostelmate/models/roomdatamodel.dart';
 
 class AddStudentPage extends ConsumerStatefulWidget {
   final String hostelId;
   final String roomId;
+  final bool isEditing;
+  final StudentModel? student;
 
   const AddStudentPage({
     super.key,
     required this.hostelId,
     required this.roomId,
+    this.isEditing = false,
+    this.student,
   });
 
   @override
@@ -28,6 +33,21 @@ class _AddStudentPageState extends ConsumerState<AddStudentPage> {
   final _parentPhoneNumberController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    if (widget.isEditing && widget.student != null) {
+      // Pre-fill the form with existing student data
+      _fullNameController.text = widget.student!.name;
+      _phoneNumberController.text = widget.student!.phone;
+      _emailController.text = widget.student!.email;
+      _checkInDateController.text = widget.student!.checkInDate;
+      _roomRentController.text = widget.student!.roomRent.toString();
+      _aadharNumberController.text = widget.student!.aadharNumber;
+      _parentPhoneNumberController.text = widget.student!.parentPhoneNumber;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     // Debug print to check room ID
     print('Room ID being used: ${widget.roomId}');
@@ -36,9 +56,9 @@ class _AddStudentPageState extends ConsumerState<AddStudentPage> {
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        title: const Text(
-          "Add Student",
-          style: TextStyle(
+        title: Text(
+          widget.isEditing ? "Edit Student" : "Add Student",
+          style: const TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
@@ -220,35 +240,58 @@ class _AddStudentPageState extends ConsumerState<AddStudentPage> {
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
                           try {
-                            await ref.read(studentProvider.notifier).addStudent(
-                              hostelId: widget.hostelId,
-                              roomId: widget.roomId,
-                              fullName: _fullNameController.text,
-                              phoneNumber: _phoneNumberController.text,
-                              email: _emailController.text,
-                              checkInDate: _checkInDateController.text,
-                              roomRent: double.parse(_roomRentController.text),
-                              aadharNumber: _aadharNumberController.text,
-                              parentPhoneNumber: _parentPhoneNumberController.text,
-                            );
+                            if (widget.isEditing && widget.student != null) {
+                              // Update existing student
+                              await ref.read(studentProvider.notifier).updateStudent(
+                                studentId: widget.student!.id,
+                                fullName: _fullNameController.text,
+                                phoneNumber: _phoneNumberController.text,
+                                email: _emailController.text,
+                                checkInDate: _checkInDateController.text,
+                                roomRent: double.parse(_roomRentController.text),
+                                aadharNumber: _aadharNumberController.text,
+                                parentPhoneNumber: _parentPhoneNumberController.text,
+                              );
+                              
+                              // Show success message
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Student updated successfully!'),
+                                  backgroundColor: Colors.green,
+                                ),
+                              );
+                            } else {
+                              // Add new student
+                              await ref.read(studentProvider.notifier).addStudent(
+                                hostelId: widget.hostelId,
+                                roomId: widget.roomId,
+                                fullName: _fullNameController.text,
+                                phoneNumber: _phoneNumberController.text,
+                                email: _emailController.text,
+                                checkInDate: _checkInDateController.text,
+                                roomRent: double.parse(_roomRentController.text),
+                                aadharNumber: _aadharNumberController.text,
+                                parentPhoneNumber: _parentPhoneNumberController.text,
+                              );
+                              
+                              // Show success message
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Student added successfully!'),
+                                  backgroundColor: Colors.green,
+                                ),
+                              );
+                            }
                             
                             // Refresh the students data
                             ref.invalidate(allStudentsProvider);
-                            
-                            // Show success message
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Student added successfully!'),
-                                backgroundColor: Colors.green,
-                              ),
-                            );
                             
                             Navigator.pop(context);
                           } catch (e) {
                             // Show error message
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text('Error adding student: $e'),
+                                content: Text('Error ${widget.isEditing ? "updating" : "adding"} student: $e'),
                                 backgroundColor: Colors.red,
                               ),
                             );
@@ -264,14 +307,14 @@ class _AddStudentPageState extends ConsumerState<AddStudentPage> {
                         ),
                         elevation: 2,
                       ),
-                      child: const Row(
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.save, size: 20),
-                          SizedBox(width: 8),
+                          Icon(widget.isEditing ? Icons.update : Icons.save, size: 20),
+                          const SizedBox(width: 8),
                           Text(
-                            "Save Student",
-                            style: TextStyle(
+                            widget.isEditing ? "Update Student" : "Save Student",
+                            style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
