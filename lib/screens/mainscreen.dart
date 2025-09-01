@@ -3,6 +3,7 @@ import 'package:hostelmate/Authentication/loginpage.dart';
 import 'package:hostelmate/homescreens/navigatorpage.dart';
 import 'package:hostelmate/screens/screenpages/expenditure.dart';
 import 'package:hostelmate/screens/screenpages/unpaidstatus.dart';
+import 'package:hostelmate/screens/screenpages/all_students_page.dart';
 import 'package:hostelmate/staticscreens/sidenavbar.dart';
 import 'package:hostelmate/staticscreens/profilemenu.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,12 +14,23 @@ class MainScreen extends StatefulWidget {
   @override
   State<MainScreen> createState() => _DashboardScreenState();
 }
-void handleMenuSelection(String label) {
-    print("Selected: $label");
-  }
 
 class _DashboardScreenState extends State<MainScreen> {
   int _currentIndex = 0;
+
+  void handleMenuSelection(String label) {
+    print("Selected: $label");
+    
+    if (label == 'Students') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const AllStudentsPage(),
+        ),
+      );
+    }
+    // Add other menu items here as needed
+  }
 
   Future<void> logout() async {
     final prefs = await SharedPreferences.getInstance();

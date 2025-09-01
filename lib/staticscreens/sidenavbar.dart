@@ -90,8 +90,12 @@ class _SideNavBarState extends State<SideNavBar> {
         setState(() {
           selected = label;
         });
-        widget.onItemSelected(label);
-        Navigator.pop(context); 
+        // Close drawer immediately for smoother experience
+        Navigator.pop(context);
+        // Call the selection handler after a brief moment
+        Future.delayed(const Duration(milliseconds: 100), () {
+          widget.onItemSelected(label);
+        });
       },
       onHover: (hovering) {
         

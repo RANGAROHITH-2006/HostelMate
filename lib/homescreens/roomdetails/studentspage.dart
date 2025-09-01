@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hostelmate/providers/roomdataprovider.dart';
 import 'package:hostelmate/models/rooms_model.dart';
+import 'package:hostelmate/homescreens/roomdetails/add_student_page.dart';
 
 class RoomDetailsScreen extends ConsumerWidget {
   final Room room;
@@ -196,7 +197,15 @@ class RoomDetailsScreen extends ConsumerWidget {
                     if (roomStudents.length < room.capacity)
                       ElevatedButton.icon(
                         onPressed: () {
-                          // TODO: Add student functionality
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AddStudentPage(
+                                hostelId: room.hostelId,
+                                roomId: room.id,
+                              ),
+                            ),
+                          );
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.green,
