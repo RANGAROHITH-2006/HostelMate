@@ -11,40 +11,51 @@ class RoomCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.all(6),
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey.shade500, width: 2),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'R .${room.roomNumber}',
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
+              Expanded(
+                child: Text(
+                  'R.${room.roomNumber}',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
-              IconButton(
-                onPressed: onDelete,
-                icon: Icon(Icons.delete),
-                color: Colors.orange,
+              GestureDetector(
+                onTap: onDelete,
+                child: Container(
+                  padding: const EdgeInsets.all(2),
+                  child: Icon(
+                    Icons.delete,
+                    color: Colors.orange,
+                    size: 18,
+                  ),
+                ),
               ),
             ],
           ),          
+          const SizedBox(height: 4),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.bed, size: 20, color: Colors.black),
-                  const SizedBox(width: 4),
-                  Text(" ${room.capacity}", style: TextStyle(fontSize: 16)),
+                  const Icon(Icons.bed, size: 16, color: Colors.black),
+                  const SizedBox(width: 2),
+                  Text("${room.capacity}", style: const TextStyle(fontSize: 12)),
                 ],
               ),
               Row(
@@ -52,11 +63,11 @@ class RoomCard extends StatelessWidget {
                 children: [
                   const Icon(
                     Icons.person_outline,
-                    size: 20,
+                    size: 16,
                     color: Colors.black,
                   ),
-                  const SizedBox(width: 4),
-                  Text(" ${room.capacity}", style: TextStyle(fontSize: 16)),
+                  const SizedBox(width: 2),
+                  Text("${room.capacity}", style: const TextStyle(fontSize: 12)),
                 ],
               ),
             ],

@@ -168,18 +168,17 @@ class FloorCard extends ConsumerWidget {
                 if (data.isEmpty) {
                   return Center(child: const Text("No rooms yet"));
                 }
-                return SizedBox(
-                  height: 205,
+                return Flexible(
                   child: GridView.builder(
                     shrinkWrap: true,
-                    physics: const AlwaysScrollableScrollPhysics(),
+                    physics: const NeverScrollableScrollPhysics(),
                     padding: const EdgeInsets.all(12),
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
                           crossAxisSpacing: 10,
                           mainAxisSpacing: 10,
-                          childAspectRatio: 1.6,
+                          childAspectRatio: 1.8,
                         ),
                     itemCount: data.length,
                     itemBuilder: (context, index) {

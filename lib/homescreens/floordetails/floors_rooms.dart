@@ -32,22 +32,24 @@ class _FloorsAndRoomsPageState extends ConsumerState<FloorsAndRoomsPage> {
         border: Border.all(color: Colors.grey.shade500, width: 1),
         borderRadius: BorderRadius.circular(8),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Center(
-            child: const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              child: Text(
-                "Floors & Rooms",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                child: Text(
+                  "Floors & Rooms",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
               ),
             ),
-          ),
           floorsAsync.when(
             data: (floors) {
               if (floors.isEmpty) {
-                return Expanded(
+                return Container(
+                  height: MediaQuery.of(context).size.height * 0.6,
                   child: Center(
                     child: Padding(
                       padding: const EdgeInsets.all(32),
@@ -164,7 +166,8 @@ class _FloorsAndRoomsPageState extends ConsumerState<FloorsAndRoomsPage> {
                 (f) => f.floorNumber == selectedFloorNumber,
                 orElse: () => floors.first,
               );
-              return Expanded(
+              return Container(
+                height: MediaQuery.of(context).size.height * 0.7,
                 child: Column(
                   children: [
                     Padding(
@@ -291,16 +294,18 @@ class _FloorsAndRoomsPageState extends ConsumerState<FloorsAndRoomsPage> {
                         ],
                       ),
                     ),
-                    FloorCard(
-                      floorId: selectedFloor.id,
-                      floor: selectedFloor,
-                      hostelId: widget.hostelId,
-                      onDeleted: () {
-                        setState(() {
-                          
-                        });
-                      },
-                      onRoomTap: widget.onRoomTap,
+                    Expanded(
+                      child: FloorCard(
+                        floorId: selectedFloor.id,
+                        floor: selectedFloor,
+                        hostelId: widget.hostelId,
+                        onDeleted: () {
+                          setState(() {
+                            
+                          });
+                        },
+                        onRoomTap: widget.onRoomTap,
+                      ),
                     ),
                   ],
                 ),
@@ -311,6 +316,7 @@ class _FloorsAndRoomsPageState extends ConsumerState<FloorsAndRoomsPage> {
           ),
         ],
       ),
+    ),
     );
   }
 }
