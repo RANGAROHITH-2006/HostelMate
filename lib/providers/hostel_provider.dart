@@ -24,8 +24,23 @@ final hostelDataProvider = FutureProvider<Map<String, dynamic>?>((ref) async {
   return await hostelService.getHostelData();
 });
 
+// Add fallback provider
+final hostelDataFallbackProvider = FutureProvider<Map<String, dynamic>?>((ref) async {
+  final hostelService = ref.read(hostelServiceProvider);
+  try {
+    return await hostelService.getHostelDataFallback();
+  } catch (e) {
+    print('Error in hostelDataFallbackProvider: $e');
+    return null;
+  }
+});
+
 // Stream provider for real-time hostel data
 final hostelDataStreamProvider = StreamProvider<Map<String, dynamic>?>((ref) {
   final hostelService = ref.read(hostelServiceProvider);
-  return hostelService.getHostelDataStream();
+  return hostelService.getHostelDataStream().handleError((error) {
+    print('Hostel stream provider error: $error');
+    // Fallback to the future provider data
+    ref.read(hostelDataFallbackProvider);
+  });
 });

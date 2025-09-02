@@ -12,11 +12,30 @@ class ExpenditureService {
           .stream(primaryKey: ['id'])
           .eq('hostel_id', hostelId)
           .order('created_at', ascending: false)
-          .map((data) => data.map((e) => Expenditure.fromMap(e)).toList());
+          .map((data) => data.map((e) => Expenditure.fromMap(e)).toList())
+          .handleError((error) {
+            print('Expenditure stream error: $error');
+            return <Expenditure>[];
+          });
     } catch (e) {
       print('Error in expenditure stream: $e');
       // Return empty stream in case of error
       return Stream.value([]);
+    }
+  }
+
+  // Add fallback method for expenditures
+  Future<List<Expenditure>> getExpenditures(String hostelId) async {
+    try {
+      final response = await _client
+          .from('expenditure')
+          .select()
+          .eq('hostel_id', hostelId)
+          .order('created_at', ascending: false);
+      return response.map<Expenditure>((e) => Expenditure.fromMap(e)).toList();
+    } catch (e) {
+      print('Error fetching expenditures: $e');
+      return [];
     }
   }
 

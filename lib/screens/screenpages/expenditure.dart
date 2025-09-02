@@ -246,7 +246,7 @@ class ExpenditureContent extends ConsumerWidget {
               try {
                 await ref
                     .read(expenditureActionsProvider)
-                    .deleteExpenditure(expenditure.id);
+                    .deleteExpenditure(expenditure.id, hostelId);
                 // Refresh both expenditure list and total expenditure
                 ref.invalidate(expenditureProvider(hostelId));
                 ref.invalidate(totalExpenditureProvider(hostelId));

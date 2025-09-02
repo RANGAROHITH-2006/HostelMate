@@ -7,7 +7,25 @@ class RoomService {
         .from('rooms')
         .stream(primaryKey: ['id'])
         .eq('floor_id', floorId,)
-        .map((data) => data.map((e) => Room.fromMap(e)).toList());
+        .map((data) => data.map((e) => Room.fromMap(e)).toList())
+        .handleError((error) {
+          print('Room stream error: $error');
+          return <Room>[];
+        });
+  }
+
+  // Add fallback method
+  Future<List<Room>> getRooms(String floorId) async {
+    try {
+      final response = await Supabase.instance.client
+          .from('rooms')
+          .select()
+          .eq('floor_id', floorId);
+      return response.map<Room>((e) => Room.fromMap(e)).toList();
+    } catch (e) {
+      print('Error fetching rooms: $e');
+      return [];
+    }
   }
 
   Future<void> addRoom(
@@ -32,7 +50,4 @@ class RoomService {
       throw Exception('Failed to delete room: $e');
     }
   }
-
-
-  
 }

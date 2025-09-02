@@ -6,11 +6,26 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Supabase.initialize(
-    url: 'https://agvnblcwttnsvrgieqsq.supabase.co',
-    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFndm5ibGN3dHRuc3ZyZ2llcXNxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA2MDk5MDUsImV4cCI6MjA2NjE4NTkwNX0.43oiCmyKjj9wWWVsDdLrYC-pQlaBul-umhB21M-0HhI',
-  );
-  await LoginSession().checkLogin();
+  
+  try {
+    // Initialize Supabase
+    await Supabase.initialize(
+      url: 'https://agvnblcwttnsvrgieqsq.supabase.co',
+      anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFndm5ibGN3dHRuc3ZyZ2llcXNxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA2MDk5MDUsImV4cCI6MjA2NjE4NTkwNX0.43oiCmyKjj9wWWVsDdLrYC-pQlaBul-umhB21M-0HhI',
+    );
+    
+    // Small delay to ensure Supabase is fully initialized
+    await Future.delayed(const Duration(milliseconds: 500));
+    
+    // Check login status
+    await LoginSession().checkLogin();
+    
+    print('Supabase initialized successfully');
+  } catch (e) {
+    print('Error initializing Supabase: $e');
+    // Continue to run the app even if there's an initialization error
+  }
+  
   runApp(const ProviderScope(child: MyApp()));
 }
 

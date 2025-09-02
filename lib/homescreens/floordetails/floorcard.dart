@@ -196,7 +196,7 @@ class FloorCard extends ConsumerWidget {
                                 try {
                                   await ref
                                       .read(roomActionsProvider)
-                                      .deleteRoom(data[index].id);
+                                      .deleteRoom(data[index].id, floorId);
                                   ref.invalidate(roomProvider(floorId));
                                 } catch (e) {
                                   print('Error deleting room: $e');
