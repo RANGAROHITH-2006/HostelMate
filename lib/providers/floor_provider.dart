@@ -1,11 +1,14 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hostelmate/models/floors_model.dart';
-import 'package:hostelmate/services/floorservices.dart'; 
+import 'package:hostelmate/services/floorservices.dart';
 
 final floorServiceProvider = Provider((ref) => FloorService());
 
 // Add a fallback provider that uses Future instead of Stream
-final floorDataProvider = FutureProvider.family<List<Floor>, String>((ref, hostelId) async {
+final floorDataProvider = FutureProvider.family<List<Floor>, String>((
+  ref,
+  hostelId,
+) async {
   final service = ref.watch(floorServiceProvider);
   try {
     final data = await service.getFloors(hostelId);
@@ -16,11 +19,15 @@ final floorDataProvider = FutureProvider.family<List<Floor>, String>((ref, hoste
   }
 });
 
-final floorProvider = StreamProvider.family<List<Floor>, String>((ref, hostelId) {
+final floorProvider = StreamProvider.family<List<Floor>, String>((
+  ref,
+  hostelId,
+) {
   final service = ref.watch(floorServiceProvider);
-  return service.getFloorsStream(hostelId).map(
-        (data) => data.map((e) => Floor.fromMap(e)).toList(),
-      ).handleError((error) {
+  return service
+      .getFloorsStream(hostelId)
+      .map((data) => data.map((e) => Floor.fromMap(e)).toList())
+      .handleError((error) {
         print('Floor provider stream error: $error');
         // Fallback to the future provider data
         ref.read(floorDataProvider(hostelId));

@@ -6,7 +6,7 @@ class RoomService {
     return Supabase.instance.client
         .from('rooms')
         .stream(primaryKey: ['id'])
-        .eq('floor_id', floorId,)
+        .eq('floor_id', floorId)
         .map((data) => data.map((e) => Room.fromMap(e)).toList())
         .handleError((error) {
           print('Room stream error: $error');
@@ -43,7 +43,7 @@ class RoomService {
   }
 
   Future<void> deleteRoom(String roomId) async {
-   try {
+    try {
       await Supabase.instance.client.from('rooms').delete().eq('id', roomId);
     } catch (e) {
       print('Error deleting room: $e');

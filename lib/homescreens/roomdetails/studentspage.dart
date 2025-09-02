@@ -5,6 +5,7 @@ import 'package:hostelmate/providers/student_provider.dart';
 import 'package:hostelmate/models/rooms_model.dart';
 import 'package:hostelmate/homescreens/roomdetails/add_student_page.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 final List<Color> avatarColors = [
   Colors.red,
@@ -373,25 +374,92 @@ class RoomDetailsScreen extends ConsumerWidget {
                             ],
                             onSelected: (value) async {
                               if (value == 'call') {
-                                final Uri phoneUri = Uri(scheme: 'tel', path: student.phone);
-                                try {
-                                  if (await canLaunchUrl(phoneUri)) {
-                                    await launchUrl(phoneUri);
+                                // Show permission dialog first
+                                bool? shouldProceed = await showDialog<bool>(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    title: const Text('Make Phone Call'),
+                                    content: Text('Do you want to call ${student.name} at ${student.phone}?'),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(context, false),
+                                        child: const Text('Cancel'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(context, true),
+                                        child: const Text('OK'),
+                                      ),
+                                    ],
+                                  ),
+                                );
+
+                                if (shouldProceed == true) {
+                                  // Request phone permission
+                                  PermissionStatus permissionStatus = await Permission.phone.request();
+                                  
+                                  if (permissionStatus.isGranted || permissionStatus.isLimited) {
+                                    try {
+                                      // Try different approaches to launch phone dialer
+                                      final phoneNumber = student.phone;
+                                      
+                                      // Method 1: Use tel: scheme with external app mode
+                                      final Uri telUri = Uri(scheme: 'tel', path: phoneNumber);
+                                      bool launched = false;
+                                      
+                                      try {
+                                        await launchUrl(
+                                          telUri,
+                                          mode: LaunchMode.externalApplication,
+                                        );
+                                        launched = true;
+                                      } catch (e) {
+                                        print('Method 1 failed: $e');
+                                      }
+                                      
+                                      // Method 2: If method 1 fails, try with platform default
+                                      if (!launched) {
+                                        try {
+                                          await launchUrl(telUri, mode: LaunchMode.platformDefault);
+                                          launched = true;
+                                        } catch (e) {
+                                          print('Method 2 failed: $e');
+                                        }
+                                      }
+                                      
+                                      // Method 3: If still fails, try without specifying mode
+                                      if (!launched) {
+                                        try {
+                                          await launchUrl(telUri);
+                                          launched = true;
+                                        } catch (e) {
+                                          print('Method 3 failed: $e');
+                                        }
+                                      }
+                                      
+                                      if (!launched) {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          const SnackBar(
+                                            content: Text('Unable to open phone dialer. Please check if a phone app is installed.'),
+                                            backgroundColor: Colors.red,
+                                          ),
+                                        );
+                                      }
+                                    } catch (e) {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                          content: Text('Error: $e'),
+                                          backgroundColor: Colors.red,
+                                        ),
+                                      );
+                                    }
                                   } else {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
-                                        content: Text('Unable to make phone call'),
-                                        backgroundColor: Colors.red,
+                                        content: Text('Phone permission denied. Please grant permission in settings.'),
+                                        backgroundColor: Colors.orange,
                                       ),
                                     );
                                   }
-                                } catch (e) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text('Error making call: $e'),
-                                      backgroundColor: Colors.red,
-                                    ),
-                                  );
                                 }
                               } else if (value == 'edit') {
                                 Navigator.push(
