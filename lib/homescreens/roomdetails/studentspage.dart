@@ -3,9 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hostelmate/providers/roomdataprovider.dart';
 import 'package:hostelmate/providers/student_provider.dart';
 import 'package:hostelmate/models/rooms_model.dart';
-import 'package:hostelmate/homescreens/roomdetails/add_student_page.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:go_router/go_router.dart';
 
 final List<Color> avatarColors = [
   Colors.red,
@@ -217,15 +217,7 @@ class RoomDetailsScreen extends ConsumerWidget {
                     if (roomStudents.length < room.capacity)
                       ElevatedButton.icon(
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => AddStudentPage(
-                                hostelId: room.hostelId,
-                                roomId: room.id,
-                              ),
-                            ),
-                          );
+                          context.push('/add_student?hostelId=${room.hostelId}&roomId=${room.id}&isEditing=false');
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.green,
@@ -462,17 +454,7 @@ class RoomDetailsScreen extends ConsumerWidget {
                                   }
                                 }
                               } else if (value == 'edit') {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => AddStudentPage(
-                                      hostelId: student.hostelId,
-                                      roomId: student.roomId,
-                                      isEditing: true,
-                                      student: student,
-                                    ),
-                                  ),
-                                );
+                                context.push('/add_student?hostelId=${student.hostelId}&roomId=${student.roomId}&isEditing=true', extra: student);
                               } else if (value == 'remove') {
                                 showDialog(
                                   context: context,

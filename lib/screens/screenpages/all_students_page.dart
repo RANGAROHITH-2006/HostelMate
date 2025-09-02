@@ -491,34 +491,20 @@ class _AllStudentsPageState extends ConsumerState<AllStudentsPage> {
               ],
             ),
             const SizedBox(height: 4),
-            Row(
-              children: [
-                const Icon(Icons.email, size: 14, color: Colors.grey),
-                const SizedBox(width: 6),
-                Expanded(
-                  child: Text(
-                    student.email.isNotEmpty ? student.email : 'No email',
-                    style: const TextStyle(fontSize: 13),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 4),
-            Row(
-              children: [
-                const Icon(Icons.currency_rupee, size: 14, color: Colors.grey),
-                const SizedBox(width: 6),
-                Text(
-                  '₹${student.roomRent.toInt()}/month',
-                  style: const TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.green,
-                  ),
-                ),
-              ],
-            ),
+            // Row(
+            //   children: [
+            //     const Icon(Icons.currency_rupee, size: 14, color: Colors.grey),
+            //     const SizedBox(width: 6),
+            //     Text(
+            //       '${student.roomRent.toInt()}/month',
+            //       style: const TextStyle(
+            //         fontSize: 13,
+            //         fontWeight: FontWeight.w500,
+            //         color: Colors.green,
+            //       ),
+            //     ),
+            //   ],
+            // ),
           ],
         ),
       ),

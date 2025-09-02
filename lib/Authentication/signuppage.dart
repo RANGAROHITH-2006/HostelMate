@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hostelmate/Authentication/auth_services.dart';
-import 'package:hostelmate/Authentication/loginpage.dart';
 
 class SignUpPage extends ConsumerStatefulWidget {
   const SignUpPage({super.key});
@@ -27,10 +26,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
       );
 
       if (success) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const Loginpage()),
-        );
+        context.go('/loginpage');
       } else {
         showMessage("Hostel name already exists");
       }

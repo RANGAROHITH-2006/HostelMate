@@ -9,6 +9,7 @@ class StudentModel {
   final double roomRent;
   final String aadharNumber;
   final String parentPhoneNumber;
+  final bool isPaid;
 
   StudentModel({
     required this.id,
@@ -21,6 +22,7 @@ class StudentModel {
     required this.roomRent,
     required this.aadharNumber,
     required this.parentPhoneNumber,
+    required this.isPaid,
   });
 
   factory StudentModel.fromMap(Map<String, dynamic> map) {
@@ -35,6 +37,7 @@ class StudentModel {
       roomRent: (map['room_rent'] as num?)?.toDouble() ?? 0.0,
       aadharNumber: map['aadhar_number']?.toString() ?? '',
       parentPhoneNumber: map['parent_phone_number']?.toString() ?? '',
+      isPaid: map['is_paid'] == true,
     );
   }
 
