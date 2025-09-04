@@ -4,6 +4,7 @@ import 'package:hostelmate/Authentication/loginpage.dart';
 import 'package:hostelmate/Authentication/signuppage.dart';
 import 'package:hostelmate/screens/mainscreen.dart';
 import 'package:hostelmate/screens/screenpages/all_students_page.dart';
+import 'package:hostelmate/screens/screenpages/unpaidstatus.dart';
 import 'package:hostelmate/homescreens/roomdetails/add_student_page.dart';
 import 'package:hostelmate/models/roomdatamodel.dart';
 
@@ -24,6 +25,7 @@ final route = GoRouter(
     GoRoute(path: '/loginpage',builder: (context,state)=>Loginpage()),
     GoRoute(path: '/homepage',builder: (context,state)=>MainScreen()),
     GoRoute(path: '/all_students',builder: (context,state)=>AllStudentsPage()),
+    GoRoute(path: '/unpaid_students',builder: (context,state)=>Unpaidstatus()),
     GoRoute(
       path: '/add_student',
       builder: (context, state) {

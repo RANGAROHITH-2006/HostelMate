@@ -5,8 +5,15 @@ class RoomCard extends StatelessWidget {
   final Room room;
   final String hostelId;
   final VoidCallback onDelete;
+  final int studentCount;
  
-  const RoomCard({required this.room, required this.hostelId, required this.onDelete, super.key});
+  const RoomCard({
+    required this.room, 
+    required this.hostelId, 
+    required this.onDelete, 
+    required this.studentCount,
+    super.key
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +74,7 @@ class RoomCard extends StatelessWidget {
                     color: Colors.black,
                   ),
                   const SizedBox(width: 2),
-                  Text("${room.capacity}", style: const TextStyle(fontSize: 12)),
+                  Text("$studentCount", style: const TextStyle(fontSize: 12)),
                 ],
               ),
             ],

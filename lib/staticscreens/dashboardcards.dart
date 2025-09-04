@@ -85,6 +85,9 @@ class DashboardCards extends ConsumerWidget {
                         0, 
                         Colors.red.shade100, 
                         Colors.red,
+                        onTap: () {
+                          context.push('/unpaid_students');
+                        },
                       );
                     }
                     
@@ -100,6 +103,9 @@ class DashboardCards extends ConsumerWidget {
                           unpaidCount, 
                           Colors.red.shade100, 
                           Colors.red,
+                          onTap: () {
+                            context.push('/unpaid_students');
+                          },
                         );
                       },
                       loading: () => _buildLoadingCard(Icons.money_off, "Unpaid Students", Colors.red.shade100, Colors.red),
@@ -109,6 +115,9 @@ class DashboardCards extends ConsumerWidget {
                         0, 
                         Colors.red.shade100, 
                         Colors.red,
+                        onTap: () {
+                          context.push('/unpaid_students');
+                        },
                       ),
                     );
                   },
@@ -119,6 +128,9 @@ class DashboardCards extends ConsumerWidget {
                     0, 
                     Colors.red.shade100, 
                     Colors.red,
+                    onTap: () {
+                      context.push('/unpaid_students');
+                    },
                   ),
                 ),
               ),

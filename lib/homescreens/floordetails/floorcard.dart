@@ -6,6 +6,7 @@ import 'package:hostelmate/models/rooms_model.dart';
 import 'package:hostelmate/popupdialogs/floordialog.dart';
 import 'package:hostelmate/providers/floor_provider.dart';
 import 'package:hostelmate/providers/rooms_provider.dart';
+import 'package:hostelmate/providers/roomdataprovider.dart';
 
 class FloorCard extends ConsumerWidget {
   final String floorId;
@@ -26,6 +27,7 @@ class FloorCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final rooms = ref.watch(roomProvider(floorId));
+    final allStudentsAsync = ref.watch(allStudentsProvider);
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
@@ -182,31 +184,98 @@ class FloorCard extends ConsumerWidget {
                         ),
                     itemCount: data.length,
                     itemBuilder: (context, index) {
-                      return GestureDetector(
-                        onTap: () => onRoomTap(data[index], 'Floor ${floor.floorNumber}'),
-                        child: RoomCard(
-                          room: data[index],
-                          hostelId: hostelId,
-                          onDelete: () async {
-                            await showDeleteConfirmationDialog(
-                              context: context,
-                              title: 'Room',
-                              word: 'Students',
-                              onConfirm: () async {
-                                try {
-                                  await ref
-                                      .read(roomActionsProvider)
-                                      .deleteRoom(data[index].id, floorId);
-                                  ref.invalidate(roomProvider(floorId));
-                                } catch (e) {
-                                  print('Error deleting room: $e');
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text('Error deleting room: $e')),
-                                  );
-                                }
+                      return allStudentsAsync.when(
+                        data: (allStudents) {
+                          final room = data[index];
+                          // Calculate student count for this room
+                          final studentCount = allStudents
+                              .where((student) => student.roomId == room.id)
+                              .length;
+                          
+                          return GestureDetector(
+                            onTap: () => onRoomTap(room, 'Floor ${floor.floorNumber}'),
+                            child: RoomCard(
+                              room: room,
+                              hostelId: hostelId,
+                              studentCount: studentCount,
+                              onDelete: () async {
+                                await showDeleteConfirmationDialog(
+                                  context: context,
+                                  title: 'Room',
+                                  word: 'Students',
+                                  onConfirm: () async {
+                                    try {
+                                      await ref
+                                          .read(roomActionsProvider)
+                                          .deleteRoom(room.id, floorId);
+                                      ref.invalidate(roomProvider(floorId));
+                                    } catch (e) {
+                                      print('Error deleting room: $e');
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(content: Text('Error deleting room: $e')),
+                                      );
+                                    }
+                                  },
+                                );
                               },
-                            );
-                          },
+                            ),
+                          );
+                        },
+                        loading: () => GestureDetector(
+                          onTap: () => onRoomTap(data[index], 'Floor ${floor.floorNumber}'),
+                          child: RoomCard(
+                            room: data[index],
+                            hostelId: hostelId,
+                            studentCount: 0, // Default to 0 while loading
+                            onDelete: () async {
+                              await showDeleteConfirmationDialog(
+                                context: context,
+                                title: 'Room',
+                                word: 'Students',
+                                onConfirm: () async {
+                                  try {
+                                    await ref
+                                        .read(roomActionsProvider)
+                                        .deleteRoom(data[index].id, floorId);
+                                    ref.invalidate(roomProvider(floorId));
+                                  } catch (e) {
+                                    print('Error deleting room: $e');
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text('Error deleting room: $e')),
+                                    );
+                                  }
+                                },
+                              );
+                            },
+                          ),
+                        ),
+                        error: (error, stack) => GestureDetector(
+                          onTap: () => onRoomTap(data[index], 'Floor ${floor.floorNumber}'),
+                          child: RoomCard(
+                            room: data[index],
+                            hostelId: hostelId,
+                            studentCount: 0, // Default to 0 on error
+                            onDelete: () async {
+                              await showDeleteConfirmationDialog(
+                                context: context,
+                                title: 'Room',
+                                word: 'Students',
+                                onConfirm: () async {
+                                  try {
+                                    await ref
+                                        .read(roomActionsProvider)
+                                        .deleteRoom(data[index].id, floorId);
+                                    ref.invalidate(roomProvider(floorId));
+                                  } catch (e) {
+                                    print('Error deleting room: $e');
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text('Error deleting room: $e')),
+                                    );
+                                  }
+                                },
+                              );
+                            },
+                          ),
                         ),
                       );
                     },

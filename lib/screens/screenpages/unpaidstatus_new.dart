@@ -7,7 +7,6 @@ import 'package:hostelmate/models/roomdatamodel.dart';
 
 class Unpaidstatus extends ConsumerWidget {
   const Unpaidstatus({super.key});
-  // New redesigned unpaid students page
 
   Future<void> _showPaymentConfirmationDialog(
     BuildContext context,
@@ -84,12 +83,14 @@ class Unpaidstatus extends ConsumerWidget {
     final hostelIdAsync = ref.watch(hostelIdProvider);
 
     return Scaffold(
-       backgroundColor: Colors.grey[50],
       appBar: AppBar(
         title: const Text('Unpaid Students'),
         backgroundColor: const Color(0xFF0B1E38),
         foregroundColor: Colors.white,
-        automaticallyImplyLeading: false, // Remove back button for tab navigation
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
       body: hostelIdAsync.when(
         data: (hostelId) {
@@ -393,7 +394,6 @@ class _UnpaidStudentsViewState extends State<UnpaidStudentsView> {
                     final roomStudents = studentsByRoom[roomNumber]!;
 
                     return Card(
-                      color: Colors.white,
                       margin: const EdgeInsets.only(bottom: 8),
                       elevation: 2,
                       shape: RoundedRectangleBorder(
@@ -406,7 +406,7 @@ class _UnpaidStudentsViewState extends State<UnpaidStudentsView> {
                             width: double.infinity,
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
-                              color: Colors.grey[200],
+                              color: const Color(0xFF0B1E38),
                               borderRadius: const BorderRadius.only(
                                 topLeft: Radius.circular(12),
                                 topRight: Radius.circular(12),
@@ -416,7 +416,7 @@ class _UnpaidStudentsViewState extends State<UnpaidStudentsView> {
                               children: [
                                 Icon(
                                   Icons.meeting_room,
-                                   color: Color(0xFF0B1E38),
+                                  color: Colors.white,
                                   size: 18,
                                 ),
                                 const SizedBox(width: 8),
@@ -425,14 +425,14 @@ class _UnpaidStudentsViewState extends State<UnpaidStudentsView> {
                                   style: const TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
-                                     color: Color(0xFF0B1E38),
+                                    color: Colors.white,
                                   ),
                                 ),
                                 const Spacer(),
                                 Text(
                                   '${roomStudents.length} student${roomStudents.length > 1 ? 's' : ''}',
                                   style: const TextStyle(
-                                     color: Color(0xFF0B1E38),
+                                    color: Colors.white70,
                                     fontSize: 12,
                                   ),
                                 ),
@@ -491,7 +491,6 @@ class _UnpaidStudentsViewState extends State<UnpaidStudentsView> {
                                 ),
                               ),
                             ),
-                            
                           )).toList(),
                         ],
                       ),
