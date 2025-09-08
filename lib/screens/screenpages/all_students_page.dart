@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hostelmate/providers/roomdataprovider.dart';
 import 'package:hostelmate/providers/hostel_provider.dart';
 import 'package:hostelmate/models/roomdatamodel.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:permission_handler/permission_handler.dart';
+import '../../utils/phone_utils.dart';
 
 final List<Color> avatarColors = [
   Colors.red,
@@ -454,6 +454,16 @@ class _AllStudentsPageState extends ConsumerState<AllStudentsPage> {
   Widget _buildStudentTile(StudentModel student) {
     return ListTile(
       contentPadding: const EdgeInsets.all(16),
+      onTap: () {
+        // Navigate to student details page
+        final roomData = ref.read(allRoomsProvider).value?[student.roomId];
+        final roomNumber = roomData?['room_number']?.toString() ?? 'Unknown';
+        
+        context.push('/student_details', extra: {
+          'student': student,
+          'roomNumber': roomNumber,
+        });
+      },
       leading: CircleAvatar(
         backgroundColor: _getAvatarColor(student.id),
         child: Text(
@@ -573,72 +583,7 @@ class _AllStudentsPageState extends ConsumerState<AllStudentsPage> {
             );
 
             if (shouldProceed == true) {
-              // Request phone permission
-              PermissionStatus permissionStatus = await Permission.phone.request();
-              
-              if (permissionStatus.isGranted || permissionStatus.isLimited) {
-                try {
-                  // Try different approaches to launch phone dialer
-                  final phoneNumber = student.phone;
-                  
-                  // Method 1: Use tel: scheme with external app mode
-                  final Uri telUri = Uri(scheme: 'tel', path: phoneNumber);
-                  bool launched = false;
-                  
-                  try {
-                    await launchUrl(
-                      telUri,
-                      mode: LaunchMode.externalApplication,
-                    );
-                    launched = true;
-                  } catch (e) {
-                    print('Method 1 failed: $e');
-                  }
-                  
-                  // Method 2: If method 1 fails, try with platform default
-                  if (!launched) {
-                    try {
-                      await launchUrl(telUri, mode: LaunchMode.platformDefault);
-                      launched = true;
-                    } catch (e) {
-                      print('Method 2 failed: $e');
-                    }
-                  }
-                  
-                  // Method 3: If still fails, try without specifying mode
-                  if (!launched) {
-                    try {
-                      await launchUrl(telUri);
-                      launched = true;
-                    } catch (e) {
-                      print('Method 3 failed: $e');
-                    }
-                  }
-                  
-                  if (!launched) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Unable to open phone dialer. Please check if a phone app is installed.'),
-                        backgroundColor: Colors.red,
-                      ),
-                    );
-                  }
-                } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Error: $e'),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
-                }
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Phone permission denied. Please grant permission in settings.'),
-                    backgroundColor: Colors.orange,
-                  ),
-                );
-              }
+              PhoneUtils.makePhoneCall(context, student.phone, student.name);
             }
           } else {
             // TODO: Handle other menu actions

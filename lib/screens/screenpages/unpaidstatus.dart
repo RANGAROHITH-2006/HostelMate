@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hostelmate/providers/roomdataprovider.dart';
 import 'package:hostelmate/providers/hostel_provider.dart';
 import 'package:hostelmate/providers/payment_provider.dart';
@@ -440,6 +441,15 @@ class _UnpaidStudentsViewState extends State<UnpaidStudentsView> {
                             ),
                           ),
                           ...roomStudents.map((student) => ListTile(
+                            onTap: () {
+                              // Navigate to student details page
+                              final roomNumber = _getRoomNumber(student.roomId);
+                              
+                              context.push('/student_details', extra: {
+                                'student': student,
+                                'roomNumber': roomNumber,
+                              });
+                            },
                             leading: CircleAvatar(
                               backgroundColor: const Color(0xFF0B1E38),
                               child: Text(

@@ -16,19 +16,46 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
   bool obscurePassword = true;
+  bool isLoading = false;
   final auth = AuthService();
 
   void signup() async {
     if (formKey.currentState!.validate()) {
-      final success = await auth.signup(
-        hostelNameController.text.trim(),
-        passwordController.text.trim(),
-      );
+      setState(() {
+        isLoading = true;
+      });
 
-      if (success) {
-        context.go('/loginpage');
-      } else {
-        showMessage("Hostel name already exists");
+      try {
+        final success = await auth.signup(
+          hostelNameController.text.trim(),
+          passwordController.text.trim(),
+        );
+
+        if (success) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("Account created successfully! Please login."),
+                backgroundColor: Colors.green,
+              ),
+            );
+            context.go('/loginpage');
+          }
+        } else {
+          if (mounted) {
+            showMessage("Hostel name already exists");
+          }
+        }
+      } catch (e) {
+        if (mounted) {
+          showMessage("Signup failed: ${e.toString()}");
+        }
+      } finally {
+        if (mounted) {
+          setState(() {
+            isLoading = false;
+          });
+        }
       }
     }
   }
@@ -149,8 +176,28 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                     const SizedBox(height: 30),
 
                     ElevatedButton(
-                      onPressed: signup,
-                      child: const Text('Sign Up'),
+                      onPressed: isLoading ? null : signup,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: isLoading
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                              ),
+                            )
+                          : const Text(
+                              'Sign Up',
+                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                            ),
                     ),
                     const SizedBox(height: 20),
 

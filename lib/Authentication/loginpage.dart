@@ -17,24 +17,54 @@ class _LoginpageState extends ConsumerState<Loginpage> {
   final hostelNameController = TextEditingController();
   final passwordController = TextEditingController();
   bool obscurePassword = true;
+  bool isLoading = false;
   final auth = AuthService();
 
   void login() async {
     if (formKey.currentState!.validate()) {
-      final success = await auth.login(
-        hostelNameController.text.trim(),
-        passwordController.text.trim(),
-      );
+      setState(() {
+        isLoading = true;
+      });
 
-      if (success) {
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('loggedInHostel', hostelNameController.text.trim());
-        LoginSession.loggedIn = true;
-        context.go('/homepage');
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Invalid hostel name or password")),
+      try {
+        final success = await auth.login(
+          hostelNameController.text.trim(),
+          passwordController.text.trim(),
         );
+
+        if (success) {
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('loggedInHostel', hostelNameController.text.trim());
+          LoginSession.loggedIn = true;
+          
+          if (mounted) {
+            context.go('/homepage');
+          }
+        } else {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("Invalid hostel name or password"),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Login failed: ${e.toString()}"),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      } finally {
+        if (mounted) {
+          setState(() {
+            isLoading = false;
+          });
+        }
       }
     }
   }
@@ -134,8 +164,28 @@ class _LoginpageState extends ConsumerState<Loginpage> {
                     const SizedBox(height: 30),
 
                     ElevatedButton(
-                      onPressed: login,
-                      child: const Text('Login'),
+                      onPressed: isLoading ? null : login,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: isLoading
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                              ),
+                            )
+                          : const Text(
+                              'Login',
+                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                            ),
                     ),
 
                     const SizedBox(height: 20),
